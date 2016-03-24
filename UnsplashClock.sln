@@ -1,0 +1,60 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.24720.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ClockHD", "ClockHD", "{27A9BCD1-0F35-424D-9628-B1FEC5B9DDD2}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "UnsplashClock.Shared", "ClockHD\ClockHD.Shared\UnsplashClock.Shared.shproj", "{8B03BEAE-13D1-4CEB-A69B-4A9586D1F08F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnsplashClock.Windows", "ClockHD\ClockHD.Windows\UnsplashClock.Windows.csproj", "{58843499-85A0-42FD-9DA8-A978F62C4AFD}"
+EndProject
+Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		ClockHD\ClockHD.Shared\ClockHD.Shared.projitems*{8b03beae-13d1-4ceb-a69b-4a9586d1f08f}*SharedItemsImports = 13
+		ClockHD\ClockHD.Shared\ClockHD.Shared.projitems*{58843499-85a0-42fd-9da8-a978f62c4afd}*SharedItemsImports = 4
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|ARM = Debug|ARM
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|ARM = Release|ARM
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{58843499-85A0-42FD-9DA8-A978F62C4AFD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{58843499-85A0-42FD-9DA8-A978F62C4AFD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{58843499-85A0-42FD-9DA8-A978F62C4AFD}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{58843499-85A0-42FD-9DA8-A978F62C4AFD}.Debug|ARM.ActiveCfg = Debug|ARM
+		{58843499-85A0-42FD-9DA8-A978F62C4AFD}.Debug|ARM.Build.0 = Debug|ARM
+		{58843499-85A0-42FD-9DA8-A978F62C4AFD}.Debug|ARM.Deploy.0 = Debug|ARM
+		{58843499-85A0-42FD-9DA8-A978F62C4AFD}.Debug|x64.ActiveCfg = Debug|x64
+		{58843499-85A0-42FD-9DA8-A978F62C4AFD}.Debug|x64.Build.0 = Debug|x64
+		{58843499-85A0-42FD-9DA8-A978F62C4AFD}.Debug|x64.Deploy.0 = Debug|x64
+		{58843499-85A0-42FD-9DA8-A978F62C4AFD}.Debug|x86.ActiveCfg = Debug|x86
+		{58843499-85A0-42FD-9DA8-A978F62C4AFD}.Debug|x86.Build.0 = Debug|x86
+		{58843499-85A0-42FD-9DA8-A978F62C4AFD}.Debug|x86.Deploy.0 = Debug|x86
+		{58843499-85A0-42FD-9DA8-A978F62C4AFD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{58843499-85A0-42FD-9DA8-A978F62C4AFD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{58843499-85A0-42FD-9DA8-A978F62C4AFD}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{58843499-85A0-42FD-9DA8-A978F62C4AFD}.Release|ARM.ActiveCfg = Release|ARM
+		{58843499-85A0-42FD-9DA8-A978F62C4AFD}.Release|ARM.Build.0 = Release|ARM
+		{58843499-85A0-42FD-9DA8-A978F62C4AFD}.Release|ARM.Deploy.0 = Release|ARM
+		{58843499-85A0-42FD-9DA8-A978F62C4AFD}.Release|x64.ActiveCfg = Release|x64
+		{58843499-85A0-42FD-9DA8-A978F62C4AFD}.Release|x64.Build.0 = Release|x64
+		{58843499-85A0-42FD-9DA8-A978F62C4AFD}.Release|x64.Deploy.0 = Release|x64
+		{58843499-85A0-42FD-9DA8-A978F62C4AFD}.Release|x86.ActiveCfg = Release|x86
+		{58843499-85A0-42FD-9DA8-A978F62C4AFD}.Release|x86.Build.0 = Release|x86
+		{58843499-85A0-42FD-9DA8-A978F62C4AFD}.Release|x86.Deploy.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{8B03BEAE-13D1-4CEB-A69B-4A9586D1F08F} = {27A9BCD1-0F35-424D-9628-B1FEC5B9DDD2}
+		{58843499-85A0-42FD-9DA8-A978F62C4AFD} = {27A9BCD1-0F35-424D-9628-B1FEC5B9DDD2}
+	EndGlobalSection
+EndGlobal
