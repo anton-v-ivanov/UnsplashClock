@@ -1,9 +1,5 @@
 ﻿using System;
-using System.IO;
-using System.Net.Http;
-using System.Threading.Tasks;
 using Windows.Storage;
-using Windows.Storage.Streams;
 using Windows.UI.ApplicationSettings;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -15,34 +11,36 @@ namespace UnsplashClock
     public sealed partial class MainPage : Page
     {
         private const string LastFileName = "last.jpg";
-        private const string Category = "nature";
+
+        public static bool IsLoadingBackground { get; set; }
 
         public MainPage()
         {
             InitializeComponent();
 
+            SettingsHelper.LoadSettings();
+
             DateTimeTimerOnTick(null, null);
-            var dateTimeTimer = new DispatcherTimer();
+            var dateTimeTimer = new DispatcherTimer() { Interval = new TimeSpan(0, 0, 0, 0, 100) };
             dateTimeTimer.Tick += DateTimeTimerOnTick;
-            dateTimeTimer.Interval = new TimeSpan(0, 0, 0, 0, 100);
             dateTimeTimer.Start();
 
             SetLastSavedImage(LastFileName);
 
-            BackgroundTimerOnTick(null, null);
-
-            var backgroundTimer = new DispatcherTimer();
+            BackgroundTimerOnTick(this, null);
+            var backgroundTimer = new DispatcherTimer {Interval = new TimeSpan(0, 0, 1) };
             backgroundTimer.Tick += BackgroundTimerOnTick;
-            backgroundTimer.Interval = new TimeSpan(0, 0, 10);
             backgroundTimer.Start();
 
-            SettingsPane.GetForCurrentView().CommandsRequested += OnCommandsRequested;
-        }
+            SettingsPane.GetForCurrentView().CommandsRequested += (sender, args) =>
+            {
+                var settingsFlyout = new SettingsFlyout1();
+                settingsFlyout.PropertyChanged += (o, eventArgs) => { SettingsHelper.UpdateSetting(eventArgs.PropertyName); };
+                var setting = new SettingsCommand("ClockSettings", "Settings", handler => settingsFlyout.Show());
+                args.Request.ApplicationCommands.Add(setting);
+            };
 
-        private static void OnCommandsRequested(SettingsPane sender, SettingsPaneCommandsRequestedEventArgs args)
-        {
-            var setting = new SettingsCommand("ClockSettings", "Settings", handler => new SettingsFlyout1().Show());
-            args.Request.ApplicationCommands.Add(setting);
+            SettingsHelper.OnThemeChanged += theme => { ChangeImage(UriHelper.GetUri(theme, SettingsHelper.UpdateInterval), true); };
         }
 
         private async void SetLastSavedImage(string fileName)
@@ -51,25 +49,53 @@ namespace UnsplashClock
             if (storageFile == null)
                 return;
 
-            var source = new BitmapImage(new Uri(storageFile.Path));
-            Staging.Source = source;
-            ChangeImage(source);
+            ChangeImage(new Uri(storageFile.Path), false);
         }
 
         private void DateTimeTimerOnTick(object sender, object o)
         {
-            TimeText.Text = DateTime.Now.ToString("HH:mm");
+            TimeText.Text = DateTime.Now.ToString(SettingsHelper.LongTimeFormat ? "HH:mm" : "t");
             DateText.Text = DateTime.Now.ToString("D");
         }
 
-        private async void BackgroundTimerOnTick(object sender, object o)
+        private void BackgroundTimerOnTick(object sender, object o)
         {
-            var bounds = Window.Current.Bounds;
-            var uri = new Uri($"http://source.unsplash.com/category/{Category}/{bounds.Width}x{bounds.Height}", UriKind.Absolute);
+            if(IsLoadingBackground)
+                return;
+
+            var diff = DateTime.UtcNow - SettingsHelper.LastBackgroundChange;
+
+            switch (SettingsHelper.UpdateInterval)
+            {
+                case "minute":
+                    if (diff.TotalMinutes < 1)
+                        return;
+                    break;
+
+                case "hour":
+                    if (diff.TotalHours < 1)
+                        return;
+                    break;
+
+                case "day":
+                    if (diff.TotalDays < 1)
+                        return;
+                    break;
+            }
+
+            ChangeImage(UriHelper.GetUri(SettingsHelper.Theme, SettingsHelper.UpdateInterval), true);
+        }
+
+        private async void ChangeImage(Uri uri, bool saveLastChangedTime)
+        {
+            IsLoadingBackground = true;
             ImageSource source;
             try
             {
-                source = await DownloadImage(uri, LastFileName);
+                if(!uri.IsFile)
+                    source = await Downloader.DownloadImage(uri, LastFileName);
+                else
+                    source = new BitmapImage(uri);
             }
             catch
             {
@@ -77,42 +103,22 @@ namespace UnsplashClock
             }
 
             Staging.Source = source;
-            ChangeImage(source);
-        }
 
-        private void ChangeImage(ImageSource source)
-        {
             ImageFadeOut.Completed += (s, e) =>
             {
                 BackImage.Source = source;
                 ImageFadeIn.Begin();
             };
             ImageFadeOut.Begin();
-        }
 
-        private static async Task<ImageSource> DownloadImage(Uri uri, string fileName)
-        {
-            var bitmapImage = new BitmapImage();
-            var httpClient = new HttpClient();
-            var httpResponse = await httpClient.GetAsync(uri);
-            var bytes = await httpResponse.Content.ReadAsByteArrayAsync();
-            var storageFile = await ApplicationData.Current.LocalFolder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
-
-            using (var stream = new InMemoryRandomAccessStream())
+            if (!saveLastChangedTime)
             {
-                using (var dw = new DataWriter(stream))
-                {
-                    dw.WriteBytes(bytes);
-                    await dw.StoreAsync();
-
-                    stream.Seek(0);
-                    bitmapImage.SetSource(stream);
-
-                    await FileIO.WriteBytesAsync(storageFile, bytes);
-
-                    return bitmapImage;
-                }
+                IsLoadingBackground = false;
+                return;
             }
+            
+            SettingsHelper.LastBackgroundChange = DateTime.UtcNow;
+            IsLoadingBackground = false;
         }
     }
 }

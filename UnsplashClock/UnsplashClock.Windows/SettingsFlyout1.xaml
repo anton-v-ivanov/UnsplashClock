@@ -8,7 +8,8 @@
     mc:Ignorable="d"
     IconSource="Assets/SmallLogo.png"
     Title="Settings"
-    d:DesignWidth="346">
+    d:DesignWidth="346"
+    Loaded="SettingsFlyout_Loaded">
 
     <!-- This StackPanel acts as a root panel for vertical layout of the content sections -->
     <StackPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
@@ -17,10 +18,29 @@
 
         <!-- Content Section 1-->
         <StackPanel Style="{StaticResource SettingsFlyoutSectionStyle}">
-            <ToggleSwitch Margin="-6,0,0,0" Header = "Time Format" HorizontalAlignment="Left" HorizontalContentAlignment="Left" IsOn="True" OffContent="12 Hour" OnContent="24 Hour" />
+            <ToggleSwitch x:Name="TimeFormatToggle" Margin="-6,0,0,0" Header = "Time Format" HorizontalAlignment="Left" HorizontalContentAlignment="Left" IsOn="True" OffContent="12 Hour" OnContent="24 Hour" Toggled="TimeFormatToggle_Toggled" />
         </StackPanel>
-
-        <!-- Define more Content Sections below as necessary -->
-
+        
+        <StackPanel Style="{StaticResource SettingsFlyoutSectionStyle}">
+            <TextBlock Text="Background theme" Style="{StaticResource BodyTextBlockStyle}"/>
+            <ComboBox x:Name="ThemeSelect" Margin="0,7,0,0" SelectedIndex="0" HorizontalAlignment="Left" SelectionChanged="ThemeSelect_SelectionChanged">
+                <ComboBoxItem Content="nature"/>
+                <ComboBoxItem Content="buildings"/>
+                <ComboBoxItem Content="technology"/>
+                <ComboBoxItem Content="people"/>
+                <ComboBoxItem Content="objects"/>
+                <ComboBoxItem Content="food"/>
+            </ComboBox>
+        </StackPanel>
+        
+        <StackPanel Style="{StaticResource SettingsFlyoutSectionStyle}">
+            <TextBlock Text="Update background every" Style="{StaticResource BodyTextBlockStyle}"/>
+            <ComboBox x:Name="UpdateInterval" Margin="0,7,0,0" SelectedIndex="0" HorizontalAlignment="Left" SelectionChanged="UpdateInterval_SelectionChanged" >
+                <ComboBoxItem Content="minute"/>
+                <ComboBoxItem Content="hour"/>
+                <ComboBoxItem Content="day"/>
+            </ComboBox>
+        </StackPanel>
+        
     </StackPanel>
 </SettingsFlyout>
