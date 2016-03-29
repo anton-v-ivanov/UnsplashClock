@@ -6,7 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Name="UI"
-    SizeChanged="MainPage_OnSizeChanged">
+    Loaded="MainPage_OnLoaded">
 
     <Grid Margin="0,-4,0,4" DataContext="{Binding ElementName=UI}" x:Name="Grid">
         <Grid.Resources>

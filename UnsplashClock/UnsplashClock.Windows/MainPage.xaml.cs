@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.UI.ApplicationSettings;
 using Windows.UI.Xaml;
@@ -12,7 +13,7 @@ namespace UnsplashClock
     {
         private const string LastFileName = "last.jpg";
 
-        public static bool IsLoadingBackground { get; set; }
+        public static object IsLoadingBackground = new object();
 
         public MainPage()
         {
@@ -83,7 +84,6 @@ namespace UnsplashClock
         private void BackgroundTimerOnTick(object sender, object o)
         {
             var diff = DateTime.UtcNow - SettingsHelper.LastBackgroundChange;
-            bool forceChange = false;
 
             switch (SettingsHelper.UpdateInterval)
             {
@@ -95,11 +95,6 @@ namespace UnsplashClock
                 case "hour":
                     if (diff.TotalHours < 1)
                         return;
-                    if (diff.TotalHours > 3)
-                    {
-                        forceChange = true;
-                        break;
-                    }
                     break;
 
                 case "day":
@@ -108,52 +103,61 @@ namespace UnsplashClock
                     break;
             }
 
-            if (IsLoadingBackground && !forceChange)
-                return;
-
             ChangeImage(UriHelper.GetUri(SettingsHelper.Theme, SettingsHelper.UpdateInterval), true);
         }
 
-        private async void ChangeImage(Uri uri, bool saveLastChangedTime)
+        private void ChangeImage(Uri uri, bool saveLastChangedTime)
         {
-            IsLoadingBackground = true;
-            ProgressRing.IsActive = true;
-            ImageSource source;
+            lock (IsLoadingBackground)
+            {
+                ProgressRing.IsActive = true;
+                GetImageSource(uri)
+                    .ContinueWith(t =>
+                    {
+                        var source = t.Result;
+                        Staging.Source = source;
+
+                        ImageFadeOut.Completed += (s, e) =>
+                        {
+                            BackImage.Source = source;
+                            ImageFadeIn.Begin();
+                        };
+                        ImageFadeOut.Begin();
+
+                        ProgressRing.IsActive = false;
+                        if (!saveLastChangedTime)
+                        {
+                            return;
+                        }
+
+                        SettingsHelper.LastBackgroundChange = DateTime.UtcNow;
+
+                    }, TaskScheduler.FromCurrentSynchronizationContext());
+            }
+        }
+
+        private async Task<ImageSource> GetImageSource(Uri uri)
+        {
             try
             {
-                if(!uri.IsFile)
-                    source = await Downloader.DownloadImage(uri, LastFileName);
-                else
-                    source = new BitmapImage(uri);
+                if (uri.IsFile)
+                    return new BitmapImage(uri);
+                return await Downloader.DownloadImage(uri, LastFileName);
             }
             catch
             {
-                return;
+                return null;
             }
-
-            Staging.Source = source;
-
-            ImageFadeOut.Completed += (s, e) =>
-            {
-                BackImage.Source = source;
-                ImageFadeIn.Begin();
-            };
-            ImageFadeOut.Begin();
-
-            ProgressRing.IsActive = false;
-            if (!saveLastChangedTime)
-            {
-                IsLoadingBackground = false;
-                return;
-            }
-            
-            SettingsHelper.LastBackgroundChange = DateTime.UtcNow;
-            IsLoadingBackground = false;
         }
 
         private void MainPage_OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
             ChangeImage(UriHelper.GetUri(SettingsHelper.Theme, SettingsHelper.UpdateInterval), true);
+        }
+
+        private void MainPage_OnLoaded(object sender, RoutedEventArgs e)
+        {
+            SizeChanged += MainPage_OnSizeChanged;
         }
     }
 }
