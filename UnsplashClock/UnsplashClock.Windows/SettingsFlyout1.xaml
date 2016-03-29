@@ -11,12 +11,8 @@
     d:DesignWidth="346"
     Loaded="SettingsFlyout_Loaded">
 
-    <!-- This StackPanel acts as a root panel for vertical layout of the content sections -->
     <StackPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
 
-        <!-- The StackPanel(s) below define individual content sections -->
-
-        <!-- Content Section 1-->
         <StackPanel Style="{StaticResource SettingsFlyoutSectionStyle}">
             <ToggleSwitch x:Name="TimeFormatToggle" Margin="-6,0,0,0" Header = "Time Format" HorizontalAlignment="Left" HorizontalContentAlignment="Left" IsOn="True" OffContent="12 Hour" OnContent="24 Hour" Toggled="TimeFormatToggle_Toggled" />
         </StackPanel>

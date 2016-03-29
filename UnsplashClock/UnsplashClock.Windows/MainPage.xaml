@@ -5,7 +5,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Name="UI">
+    Name="UI"
+    SizeChanged="MainPage_OnSizeChanged">
 
     <Grid Margin="0,-4,0,4" DataContext="{Binding ElementName=UI}" x:Name="Grid">
         <Grid.Resources>
@@ -22,31 +23,31 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="30*" />
-            <ColumnDefinition Width="40*" />
-            <ColumnDefinition Width="30*" />
+            <ColumnDefinition Width="25*" />
+            <ColumnDefinition Width="50*" />
+            <ColumnDefinition Width="25*" />
         </Grid.ColumnDefinitions>
         <Image x:Name="Staging" Visibility="Collapsed" Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="0" Grid.RowSpan="3"/>
         <Image x:Name="BackImage" Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="0" Grid.RowSpan="3"/>
 
         <Rectangle Fill="#404040" Height="Auto" Width="Auto" Opacity="0.6" Grid.Column="1" Grid.Row="1"/>
-        <Grid x:Name="InternalGrid" Grid.Column="1" Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="10*" />
-                <ColumnDefinition Width="80*" />
-                <ColumnDefinition Width="10*" />
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="70*" />
-                <RowDefinition Height="30*"/>
-            </Grid.RowDefinitions>
-            <Viewbox Stretch="Uniform" Grid.Column="1" Grid.Row="0" >
-                <TextBlock x:Name="TimeText" TextWrapping="Wrap" FontFamily="/Fonts/digital-7.regular.ttf#Digital-7" />
-            </Viewbox>
-            <Viewbox Stretch="Uniform" Grid.Column="1" Grid.Row="1" >
-                <TextBlock x:Name="DateText" TextWrapping="Wrap" VerticalAlignment="Top" />
-            </Viewbox>
-        </Grid>
+        <ProgressRing x:Name="ProgressRing" Foreground="White" IsActive="False" Grid.Column="2" Grid.Row="0" Width="50" Height="50" HorizontalAlignment="Right" VerticalAlignment="Top" />
+        <StackPanel Grid.Column="1" Grid.Row="1">
+            <TextBlock x:Name="TimeText" FontFamily="/Fonts/digital-7.regular.ttf#Digital-7" Text="22:22" FontSize="300" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+            <TextBlock x:Name="DateText" Text="Monday, March 28, 2016" FontSize="60" HorizontalAlignment="Center" VerticalAlignment="Top" Padding="0,0,0,20" />
+        </StackPanel>
+        <StackPanel x:Name="Clock1Panel" Grid.Column="1" Grid.Row="2" Margin="0,20,0,0" HorizontalAlignment="Left">
+            <TextBlock x:Name="Clock1Name" Text="New York" FontSize="30" HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="200"/>
+            <TextBlock x:Name="Clock1Text" FontFamily="/Fonts/digital-7.regular.ttf#Digital-7" Text="22:22" FontSize="70" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        </StackPanel>
+        <StackPanel x:Name="Clock2Panel"  Grid.Column="1" Grid.Row="2" VerticalAlignment="Top" Margin="0,20,0,0">
+            <TextBlock x:Name="Clock2Name" Text="Los Angeles" FontSize="30" HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="200"/>
+            <TextBlock x:Name="Clock2Text" TextWrapping="Wrap" FontFamily="/Fonts/digital-7.regular.ttf#Digital-7" Text="00:11" FontSize="70" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        </StackPanel>
+        <StackPanel x:Name="Clock3Panel" Grid.Column="1" Grid.Row="2" VerticalAlignment="Top" Margin="0,20,0,0" HorizontalAlignment="Right">
+            <TextBlock x:Name="Clock3Name" Text="Hong Kong" FontSize="30" HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="200"/>
+            <TextBlock x:Name="Clock3Text" TextWrapping="Wrap" FontFamily="/Fonts/digital-7.regular.ttf#Digital-7" Text="05:21" FontSize="70" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        </StackPanel>
     </Grid>
 </Page>
 

@@ -35,8 +35,14 @@ namespace UnsplashClock
             SettingsPane.GetForCurrentView().CommandsRequested += (sender, args) =>
             {
                 var settingsFlyout = new SettingsFlyout1();
-                settingsFlyout.PropertyChanged += (o, eventArgs) => { SettingsHelper.UpdateSetting(eventArgs.PropertyName); };
                 var setting = new SettingsCommand("ClockSettings", "Settings", handler => settingsFlyout.Show());
+                args.Request.ApplicationCommands.Add(setting);
+            };
+
+            SettingsPane.GetForCurrentView().CommandsRequested += (sender, args) =>
+            {
+                var settingsFlyout = new SettingsFlyout2();
+                var setting = new SettingsCommand("WorldClock", "World Clock", handler => settingsFlyout.Show());
                 args.Request.ApplicationCommands.Add(setting);
             };
 
@@ -56,14 +62,28 @@ namespace UnsplashClock
         {
             TimeText.Text = DateTime.Now.ToString(SettingsHelper.LongTimeFormat ? "HH:mm" : "t");
             DateText.Text = DateTime.Now.ToString("D");
+
+            if (SettingsHelper.WorldTime)
+            {
+                Clock1Panel.Visibility  = Clock2Panel.Visibility = Clock3Panel.Visibility = Visibility.Visible;
+
+                Clock1Name.Text = SettingsHelper.Clock1Name;
+                Clock1Text.Text = SettingsHelper.Clock1TimeZone.ConvertTime(new DateTimeOffset(DateTime.Now)).ToString(SettingsHelper.LongTimeFormat ? "HH:mm" : "t");
+                Clock2Name.Text = SettingsHelper.Clock2Name;
+                Clock2Text.Text = SettingsHelper.Clock2TimeZone.ConvertTime(new DateTimeOffset(DateTime.Now)).ToString(SettingsHelper.LongTimeFormat ? "HH:mm" : "t");
+                Clock3Name.Text = SettingsHelper.Clock3Name;
+                Clock3Text.Text = SettingsHelper.Clock3TimeZone.ConvertTime(new DateTimeOffset(DateTime.Now)).ToString(SettingsHelper.LongTimeFormat ? "HH:mm" : "t");
+            }
+            else
+            {
+                Clock1Panel.Visibility = Clock2Panel.Visibility = Clock3Panel.Visibility = Visibility.Collapsed;
+            }
         }
 
         private void BackgroundTimerOnTick(object sender, object o)
         {
-            if(IsLoadingBackground)
-                return;
-
             var diff = DateTime.UtcNow - SettingsHelper.LastBackgroundChange;
+            bool forceChange = false;
 
             switch (SettingsHelper.UpdateInterval)
             {
@@ -75,6 +95,11 @@ namespace UnsplashClock
                 case "hour":
                     if (diff.TotalHours < 1)
                         return;
+                    if (diff.TotalHours > 3)
+                    {
+                        forceChange = true;
+                        break;
+                    }
                     break;
 
                 case "day":
@@ -83,12 +108,16 @@ namespace UnsplashClock
                     break;
             }
 
+            if (IsLoadingBackground && !forceChange)
+                return;
+
             ChangeImage(UriHelper.GetUri(SettingsHelper.Theme, SettingsHelper.UpdateInterval), true);
         }
 
         private async void ChangeImage(Uri uri, bool saveLastChangedTime)
         {
             IsLoadingBackground = true;
+            ProgressRing.IsActive = true;
             ImageSource source;
             try
             {
@@ -111,6 +140,7 @@ namespace UnsplashClock
             };
             ImageFadeOut.Begin();
 
+            ProgressRing.IsActive = false;
             if (!saveLastChangedTime)
             {
                 IsLoadingBackground = false;
@@ -119,6 +149,11 @@ namespace UnsplashClock
             
             SettingsHelper.LastBackgroundChange = DateTime.UtcNow;
             IsLoadingBackground = false;
+        }
+
+        private void MainPage_OnSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            ChangeImage(UriHelper.GetUri(SettingsHelper.Theme, SettingsHelper.UpdateInterval), true);
         }
     }
 }

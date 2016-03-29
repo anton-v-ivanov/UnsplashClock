@@ -14,7 +14,7 @@
     <Resource Language="x-generate" />
   </Resources>
   <Applications>
-    <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="ClockHD.Windows.App">
+    <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="UnsplashClock.Windows.App">
       <m2:VisualElements DisplayName="UnsplashClock" Square150x150Logo="Assets\Logo.png" Square30x30Logo="Assets\SmallLogo.png" Description="UnsplashClock" ForegroundText="light" BackgroundColor="#464646">
         <m2:DefaultTile ShortName="UnsplashClock">
         </m2:DefaultTile>
