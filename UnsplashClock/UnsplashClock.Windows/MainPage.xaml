@@ -34,13 +34,14 @@
         <ProgressRing x:Name="ProgressRing" Foreground="White" IsActive="False" Grid.Column="2" Grid.Row="0" Width="50" Height="50" HorizontalAlignment="Right" VerticalAlignment="Top" />
         <StackPanel Grid.Column="1" Grid.Row="1">
             <TextBlock x:Name="TimeText" FontFamily="/Fonts/digital-7.regular.ttf#Digital-7" Text="22:22" FontSize="300" HorizontalAlignment="Center" VerticalAlignment="Top"/>
-            <TextBlock x:Name="DateText" Text="Monday, March 28, 2016" FontSize="60" HorizontalAlignment="Center" VerticalAlignment="Top" Padding="0,0,0,20" />
+            <TextBlock x:Name="DateText" Text="Monday, March 28, 2016" FontSize="50" HorizontalAlignment="Center" VerticalAlignment="Top" Padding="0,0,0,20" />
         </StackPanel>
-        <StackPanel x:Name="Clock1Panel" Grid.Column="1" Grid.Row="2" Margin="0,20,0,0" HorizontalAlignment="Left">
+        
+        <StackPanel x:Name="Clock1Panel" Grid.Column="1" Grid.Row="2" Margin="0,20,0,0" HorizontalAlignment="Left" >
             <TextBlock x:Name="Clock1Name" Text="New York" FontSize="30" HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="200"/>
             <TextBlock x:Name="Clock1Text" FontFamily="/Fonts/digital-7.regular.ttf#Digital-7" Text="22:22" FontSize="70" HorizontalAlignment="Center" VerticalAlignment="Center"/>
         </StackPanel>
-        <StackPanel x:Name="Clock2Panel"  Grid.Column="1" Grid.Row="2" VerticalAlignment="Top" Margin="0,20,0,0">
+        <StackPanel x:Name="Clock2Panel"  Grid.Column="1" Grid.Row="2" VerticalAlignment="Top" Margin="0,20,0,0" >
             <TextBlock x:Name="Clock2Name" Text="Los Angeles" FontSize="30" HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="200"/>
             <TextBlock x:Name="Clock2Text" TextWrapping="Wrap" FontFamily="/Fonts/digital-7.regular.ttf#Digital-7" Text="00:11" FontSize="70" HorizontalAlignment="Center" VerticalAlignment="Center"/>
         </StackPanel>

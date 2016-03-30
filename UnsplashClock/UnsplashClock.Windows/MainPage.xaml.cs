@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.UI.ApplicationSettings;
@@ -108,32 +109,30 @@ namespace UnsplashClock
 
         private void ChangeImage(Uri uri, bool saveLastChangedTime)
         {
-            lock (IsLoadingBackground)
-            {
-                ProgressRing.IsActive = true;
-                GetImageSource(uri)
-                    .ContinueWith(t =>
+            Monitor.Enter(IsLoadingBackground);
+
+            ProgressRing.IsActive = true;
+            GetImageSource(uri)
+                .ContinueWith(t =>
+                {
+                    var source = t.Result;
+                    Staging.Source = source;
+
+                    ImageFadeOut.Completed += (s, e) =>
                     {
-                        var source = t.Result;
-                        Staging.Source = source;
+                        BackImage.Source = source;
+                        ImageFadeIn.Begin();
+                    };
+                    ImageFadeOut.Begin();
 
-                        ImageFadeOut.Completed += (s, e) =>
-                        {
-                            BackImage.Source = source;
-                            ImageFadeIn.Begin();
-                        };
-                        ImageFadeOut.Begin();
-
-                        ProgressRing.IsActive = false;
-                        if (!saveLastChangedTime)
-                        {
-                            return;
-                        }
-
+                    ProgressRing.IsActive = false;
+                    if (saveLastChangedTime)
+                    {
                         SettingsHelper.LastBackgroundChange = DateTime.UtcNow;
+                    }
 
-                    }, TaskScheduler.FromCurrentSynchronizationContext());
-            }
+                    Monitor.Exit(IsLoadingBackground);
+                }, TaskScheduler.FromCurrentSynchronizationContext());
         }
 
         private async Task<ImageSource> GetImageSource(Uri uri)
