@@ -13,8 +13,7 @@ namespace UnsplashClock
     public sealed partial class MainPage : Page
     {
         private const string LastFileName = "last.jpg";
-
-        public static object IsLoadingBackground = new object();
+        private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1);
 
         public MainPage()
         {
@@ -23,7 +22,7 @@ namespace UnsplashClock
             SettingsHelper.LoadSettings();
 
             DateTimeTimerOnTick(null, null);
-            var dateTimeTimer = new DispatcherTimer() { Interval = new TimeSpan(0, 0, 0, 0, 100) };
+            var dateTimeTimer = new DispatcherTimer { Interval = new TimeSpan(0, 0, 0, 0, 100) };
             dateTimeTimer.Tick += DateTimeTimerOnTick;
             dateTimeTimer.Start();
 
@@ -84,58 +83,71 @@ namespace UnsplashClock
 
         private void BackgroundTimerOnTick(object sender, object o)
         {
+            ChangeImage(UriHelper.GetUri(SettingsHelper.Theme, SettingsHelper.UpdateInterval), true);
+        }
+
+        private async void ChangeImage(Uri uri, bool saveLastChangedTime)
+        {
+            await _semaphore.WaitAsync();
+            try
+            {
+                if (saveLastChangedTime && !IsTimeToChange())
+                {
+                    return;
+                }
+
+                ProgressRing.IsActive = true;
+
+                var source = await GetImageSource(uri);
+                if (source == null)
+                    return;
+
+                Staging.Source = source;
+
+                ImageFadeOut.Completed += (s, e) =>
+                {
+                    BackImage.Source = source;
+                    ImageFadeIn.Begin();
+                };
+                ImageFadeOut.Begin();
+
+                if (saveLastChangedTime)
+                {
+                    SettingsHelper.LastBackgroundChange = DateTime.UtcNow;
+                }
+            }
+            finally
+            {
+                ProgressRing.IsActive = false;
+                _semaphore.Release();
+            }
+        }
+
+        private static bool IsTimeToChange()
+        {
             var diff = DateTime.UtcNow - SettingsHelper.LastBackgroundChange;
 
             switch (SettingsHelper.UpdateInterval)
             {
                 case "minute":
                     if (diff.TotalMinutes < 1)
-                        return;
+                        return false;
                     break;
 
                 case "hour":
                     if (diff.TotalHours < 1)
-                        return;
+                        return false;
                     break;
 
                 case "day":
                     if (diff.TotalDays < 1)
-                        return;
+                        return false;
                     break;
             }
-
-            ChangeImage(UriHelper.GetUri(SettingsHelper.Theme, SettingsHelper.UpdateInterval), true);
+            return true;
         }
 
-        private void ChangeImage(Uri uri, bool saveLastChangedTime)
-        {
-            Monitor.Enter(IsLoadingBackground);
-
-            ProgressRing.IsActive = true;
-            GetImageSource(uri)
-                .ContinueWith(t =>
-                {
-                    var source = t.Result;
-                    Staging.Source = source;
-
-                    ImageFadeOut.Completed += (s, e) =>
-                    {
-                        BackImage.Source = source;
-                        ImageFadeIn.Begin();
-                    };
-                    ImageFadeOut.Begin();
-
-                    ProgressRing.IsActive = false;
-                    if (saveLastChangedTime)
-                    {
-                        SettingsHelper.LastBackgroundChange = DateTime.UtcNow;
-                    }
-
-                    Monitor.Exit(IsLoadingBackground);
-                }, TaskScheduler.FromCurrentSynchronizationContext());
-        }
-
-        private async Task<ImageSource> GetImageSource(Uri uri)
+        private static async Task<ImageSource> GetImageSource(Uri uri)
         {
             try
             {
