@@ -163,7 +163,7 @@ namespace UnsplashClock
 
         private void MainPage_OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            ChangeImage(UriHelper.GetUri(SettingsHelper.Theme, SettingsHelper.UpdateInterval), true);
+            ChangeImage(UriHelper.GetUri(SettingsHelper.Theme, SettingsHelper.UpdateInterval), false);
         }
 
         private void MainPage_OnLoaded(object sender, RoutedEventArgs e)
