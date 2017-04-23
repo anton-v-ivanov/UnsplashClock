@@ -3,7 +3,7 @@ using System.Globalization;
 using Windows.Storage;
 using TimeZones;
 
-namespace UnsplashClock
+namespace Common
 {
     public class SettingsHelper
     {

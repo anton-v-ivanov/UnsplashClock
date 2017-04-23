@@ -6,9 +6,9 @@ using Windows.Storage.Streams;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 
-namespace UnsplashClock
+namespace Common
 {
-    internal class Downloader
+    public class Downloader
     {
         public static async Task<ImageSource> DownloadImage(Uri uri, string fileName)
         {

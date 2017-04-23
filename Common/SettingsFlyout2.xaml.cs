@@ -3,7 +3,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using TimeZones;
 
-namespace UnsplashClock
+namespace Common
 {
     public sealed partial class SettingsFlyout2 : SettingsFlyout
     {

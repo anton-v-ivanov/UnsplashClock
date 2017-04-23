@@ -1,9 +1,9 @@
 ﻿using System;
 using Windows.UI.Xaml;
 
-namespace UnsplashClock
+namespace Common
 {
-    internal class UriHelper
+    public class UriHelper
     {
         public static Uri GetUri(string theme, string updateInterval)
         {

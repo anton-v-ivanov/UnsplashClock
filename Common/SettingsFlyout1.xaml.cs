@@ -3,7 +3,7 @@ using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
-namespace UnsplashClock
+namespace Common
 {
     public sealed partial class SettingsFlyout1 : SettingsFlyout
     {
